@@ -24,3 +24,9 @@ export const login: RequestHandler = async (req, res) => {
 
     res.status(200).json(result);
 };
+
+export const me: RequestHandler = async (req, res) => {
+    const user = await authService.getProfile(req.user!.id);
+
+    res.status(200).json({ user });
+};

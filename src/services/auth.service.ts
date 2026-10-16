@@ -86,3 +86,22 @@ export async function login({
         },
     };
 }
+
+export async function getProfile(userId: string) {
+    const user = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            createdAt: true,
+        },
+    });
+
+    if (!user) {
+        throw new HttpError(401, "User no longer exists");
+    }
+
+    return user;
+}
