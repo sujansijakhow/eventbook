@@ -5,6 +5,7 @@ import { env } from "./config/env.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import authRouter from "./routes/auth.routes.js";
 import eventsRouter from "./routes/events.routes.js";
+import bookingsRouter from "./routes/bookings.routes.js";
 
 export const app = express();
 
@@ -25,5 +26,6 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/events", eventsRouter);
+app.use("/api/bookings", bookingsRouter);
 
 app.use(errorHandler);
