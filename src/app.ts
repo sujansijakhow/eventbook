@@ -4,6 +4,7 @@ import cors from "cors";
 import { env } from "./config/env.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import authRouter from "./routes/auth.routes.js";
+import eventsRouter from "./routes/events.routes.js";
 
 export const app = express();
 
@@ -23,5 +24,6 @@ app.get("/api/health", (_req, res) => {
 
 
 app.use("/api/auth", authRouter);
+app.use("/api/events", eventsRouter);
 
 app.use(errorHandler);
