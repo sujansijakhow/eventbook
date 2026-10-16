@@ -3,7 +3,10 @@ import { and, asc, count, eq, gt, ilike, sql } from "drizzle-orm";
 import { db } from "../db/db.js";
 import { bookings, events } from "../db/schema.js";
 import { HttpError } from "../lib/httpError.js";
-import type { ListEventsQuery } from "../schemas/event.schema.js";
+import type {
+    EventInput,
+    ListEventsQuery,
+} from "../schemas/event.schema.js";
 
 const eventColumns = {
     id: events.id,
@@ -60,4 +63,66 @@ export async function getEvent(id: string) {
     }
 
     return event;
+}
+
+type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+async function lockEventAndCountBookings(tx: Tx, id: string) {
+    const [event] = await tx
+        .select({ id: events.id })
+        .from(events)
+        .where(eq(events.id, id))
+        .for("update");
+
+    if (!event) {
+        throw new HttpError(404, "Event not found");
+    }
+
+    const [{ booked }] = await tx
+        .select({ booked: count() })
+        .from(bookings)
+        .where(eq(bookings.eventId, id));
+
+    return booked;
+}
+
+export async function createEvent(input: EventInput) {
+    const [created] = await db
+        .insert(events)
+        .values(input)
+        .returning({ id: events.id });
+
+    return getEvent(created.id);
+}
+
+export async function updateEvent(id: string, input: EventInput) {
+    await db.transaction(async (tx) => {
+        const booked = await lockEventAndCountBookings(tx, id);
+
+        if (input.totalSeats < booked) {
+            throw new HttpError(
+                409,
+                `Cannot reduce seats below the ${booked} already booked`,
+            );
+        }
+
+        await tx.update(events).set(input).where(eq(events.id, id));
+    });
+
+    return getEvent(id);
+}
+
+export async function deleteEvent(id: string) {
+    await db.transaction(async (tx) => {
+        const booked = await lockEventAndCountBookings(tx, id);
+
+        if (booked > 0) {
+            throw new HttpError(
+                409,
+                `Cannot delete an event with ${booked} booking(s)`,
+            );
+        }
+
+        await tx.delete(events).where(eq(events.id, id));
+    });
 }
