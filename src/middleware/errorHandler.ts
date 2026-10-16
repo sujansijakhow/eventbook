@@ -1,28 +1,30 @@
 import type { ErrorRequestHandler } from "express";
 
+import { HttpError } from "../lib/httpError.js";
+
 export const errorHandler: ErrorRequestHandler = (
-    err,
+    error,
     _req,
     res,
     _next,
 ) => {
-    console.error(err);
+    if (error instanceof HttpError) {
+        res.status(error.status).json({
+            error: { message: error.message },
+        });
+        return;
+    }
 
-    const statusCode =
-        typeof err?.statusCode === "number" &&
-        err.statusCode >= 400 &&
-        err.statusCode < 600
-            ? err.statusCode
-            : 500;
+    if (error?.type === "entity.parse.failed") {
+        res.status(400).json({
+            error: { message: "Invalid JSON body" },
+        });
+        return;
+    }
 
-    const message =
-        statusCode === 500
-            ? "Internal server error"
-            : err.message || "Request failed";
+    console.error(error);
 
-    res.status(statusCode).json({
-        error: {
-            message,
-        },
+    res.status(500).json({
+        error: { message: "Internal server error" },
     });
 };
