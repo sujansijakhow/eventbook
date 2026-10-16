@@ -1,4 +1,4 @@
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, asc } from "drizzle-orm";
 
 import { db } from "../db/db.js";
 import { bookings, events } from "../db/schema.js";
@@ -66,4 +66,56 @@ export async function createBooking(
             seatsLeft: event.totalSeats - booked - 1,
         };
     });
+}
+
+export async function listUserBookings(userId: string) {
+    return db
+        .select({
+            id: bookings.id,
+            createdAt: bookings.createdAt,
+            event: {
+                id: events.id,
+                title: events.title,
+                venue: events.venue,
+                startsAt: events.startsAt,
+            },
+        })
+        .from(bookings)
+        .innerJoin(events, eq(events.id, bookings.eventId))
+        .where(eq(bookings.userId, userId))
+        .orderBy(asc(events.startsAt));
+}
+
+export async function cancelBooking(
+    userId: string,
+    bookingId: string,
+) {
+    const [booking] = await db
+        .select({
+            userId: bookings.userId,
+            startsAt: events.startsAt,
+        })
+        .from(bookings)
+        .innerJoin(events, eq(events.id, bookings.eventId))
+        .where(eq(bookings.id, bookingId));
+
+    if (!booking) {
+        throw new HttpError(404, "Booking not found");
+    }
+
+    if (booking.userId !== userId) {
+        throw new HttpError(
+            403,
+            "You can only cancel your own bookings",
+        );
+    }
+
+    if (booking.startsAt <= new Date()) {
+        throw new HttpError(
+            409,
+            "Cannot cancel a booking for a past event",
+        );
+    }
+
+    await db.delete(bookings).where(eq(bookings.id, bookingId));
 }

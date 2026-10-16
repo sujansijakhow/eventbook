@@ -1,6 +1,10 @@
 import { Router } from "express";
 
-import { createBooking } from "../controllers/bookings.controller.js";
+import {
+    cancelBooking,
+    createBooking,
+    listMyBookings,
+} from "../controllers/bookings.controller.js";
 import { authenticate } from "../middleware/auth.js";
 import { validateBody } from "../middleware/validate.js";
 import { createBookingSchema } from "../schemas/booking.schema.js";
@@ -13,5 +17,7 @@ router.post(
     validateBody(createBookingSchema),
     createBooking,
 );
+router.get("/me", authenticate, listMyBookings);
+router.delete("/:id", authenticate, cancelBooking);
 
 export default router;
