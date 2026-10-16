@@ -1,7 +1,7 @@
 import { and, asc, count, eq, gt, ilike, sql } from "drizzle-orm";
 
 import { db } from "../db/db.js";
-import { bookings, events } from "../db/schema.js";
+import { bookings, events, users } from "../db/schema.js";
 import { HttpError } from "../lib/httpError.js";
 import type {
     EventInput,
@@ -125,4 +125,25 @@ export async function deleteEvent(id: string) {
 
         await tx.delete(events).where(eq(events.id, id));
     });
+}
+
+export async function listAttendees(eventId: string) {
+    const event = await getEvent(eventId);
+
+    const attendees = await db
+        .select({
+            bookingId: bookings.id,
+            bookedAt: bookings.createdAt,
+            user: {
+                id: users.id,
+                name: users.name,
+                email: users.email,
+            },
+        })
+        .from(bookings)
+        .innerJoin(users, eq(users.id, bookings.userId))
+        .where(eq(bookings.eventId, eventId))
+        .orderBy(asc(bookings.createdAt));
+
+    return { event, attendees };
 }

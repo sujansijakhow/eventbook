@@ -6,6 +6,7 @@ import {
     getEvent,
     listEvents,
     updateEvent,
+    listAttendees
 } from "../controllers/events.controller.js";
 import {
     authenticate,
@@ -37,5 +38,11 @@ router.put(
     updateEvent,
 );
 router.delete("/:id", authenticate, requireAdmin, deleteEvent);
+router.get(
+    "/:id/attendees",
+    authenticate,
+    requireAdmin,
+    listAttendees,
+);
 
 export default router;

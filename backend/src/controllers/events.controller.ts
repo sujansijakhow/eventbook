@@ -46,3 +46,10 @@ export const deleteEvent: RequestHandler = async (req, res) => {
 
     res.status(204).send();
 };
+
+export const listAttendees: RequestHandler = async (req, res) => {
+    const { id } = eventIdParamSchema.parse(req.params);
+    const result = await eventsService.listAttendees(id);
+
+    res.status(200).json(result);
+};
