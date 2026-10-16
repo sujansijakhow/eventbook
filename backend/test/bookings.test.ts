@@ -8,13 +8,14 @@ import {
 import request from "supertest";
 import jwt from "jsonwebtoken";
 import { like } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
 
 import { app } from "../src/app.js";
 import { db } from "../src/db/db.js";
 import { env } from "../src/config/env.js";
 import { bookings, events, users } from "../src/db/schema.js";
 
-const prefix = `test-${Date.now()}`;
+const prefix = `test-bookings-${randomUUID().slice(0, 8)}`;
 const DAY = 24 * 60 * 60 * 1000;
 
 let tokens: string[];

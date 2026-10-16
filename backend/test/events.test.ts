@@ -8,13 +8,14 @@ import {
 import request from "supertest";
 import jwt from "jsonwebtoken";
 import { like } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
 
 import { app } from "../src/app.js";
 import { db } from "../src/db/db.js";
 import { env } from "../src/config/env.js";
 import { bookings, events, users } from "../src/db/schema.js";
 
-const prefix = `test-${Date.now()}`;
+const prefix = `test-events-${randomUUID().slice(0, 8)}`;
 const DAY = 24 * 60 * 60 * 1000;
 
 let adminToken: string;
@@ -247,3 +248,27 @@ describe("admin event management", () => {
         expect(after.status).toBe(404);
     });
 });
+
+    it("lists attendees for an admin and blocks everyone else", async () => {
+        const event = await createEvent({
+            title: `${prefix} attendees`,
+        });
+
+        await addBookings(event.id, 2);
+
+        const asAdmin = await request(app)
+            .get(`/api/events/${event.id}/attendees`)
+            .set("Authorization", `Bearer ${adminToken}`);
+        const asUser = await request(app)
+            .get(`/api/events/${event.id}/attendees`)
+            .set("Authorization", `Bearer ${userToken}`);
+        const anonymous = await request(app).get(
+            `/api/events/${event.id}/attendees`,
+        );
+
+        expect(asAdmin.status).toBe(200);
+        expect(asAdmin.body.attendees).toHaveLength(2);
+        expect(asAdmin.body.attendees[0].user.email).toBeDefined();
+        expect(asUser.status).toBe(403);
+        expect(anonymous.status).toBe(401);
+    });
