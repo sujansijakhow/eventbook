@@ -295,5 +295,7 @@ describe("admin event management", () => {
         expect(asAdmin.body.stats.seatFillRate).toBeLessThanOrEqual(100);
         expect(asUser.status).toBe(403);
         expect(anonymous.status).toBe(401);
+        expect(asAdmin.body.stats.recentBookings.length).toBeGreaterThan(0);
+        expect(asAdmin.body.stats.recentBookings[0].user.email).toBeDefined();
     });
 });

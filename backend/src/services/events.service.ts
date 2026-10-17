@@ -1,4 +1,4 @@
-import { and, asc, count, eq, gt, ilike, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, ilike, sql } from "drizzle-orm";
 
 import { db } from "../db/db.js";
 import { bookings, events, users } from "../db/schema.js";
@@ -169,6 +169,19 @@ export async function getStats() {
         .innerJoin(events, eq(events.id, bookings.eventId))
         .where(gt(events.startsAt, now));
 
+    const recentBookings = await db
+        .select({
+            id: bookings.id,
+            bookedAt: bookings.createdAt,
+            user: { name: users.name, email: users.email },
+            event: { id: events.id, title: events.title },
+        })
+        .from(bookings)
+        .innerJoin(users, eq(users.id, bookings.userId))
+        .innerJoin(events, eq(events.id, bookings.eventId))
+        .orderBy(desc(bookings.createdAt))
+        .limit(5);
+
     return {
         totalBookings,
         upcomingEvents: upcoming.upcomingEvents,
@@ -176,5 +189,6 @@ export async function getStats() {
             upcoming.totalSeats === 0
                 ? 0
                 : Math.round((booked / upcoming.totalSeats) * 100),
+        recentBookings,
     };
 }
