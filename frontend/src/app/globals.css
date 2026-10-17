@@ -2,6 +2,10 @@
 
 @import "tailwindcss";
 
+html {
+    overflow-y: scroll;
+}
+
 @theme {
     --color-brand-50: #f0fdfa;
     --color-brand-600: #0d9488;

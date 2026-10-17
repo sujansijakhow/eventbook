@@ -63,6 +63,7 @@ async function request<T>(
         response = await fetch(url, {
             method,
             headers,
+              cache: "no-store",
             body:
                 options.body === undefined
                     ? undefined
