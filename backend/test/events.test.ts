@@ -247,15 +247,14 @@ describe("admin event management", () => {
         expect(deleted.status).toBe(204);
         expect(after.status).toBe(404);
     });
-});
 
     it("lists attendees for an admin and blocks everyone else", async () => {
         const event = await createEvent({
             title: `${prefix} attendees`,
         });
-
+    
         await addBookings(event.id, 2);
-
+    
         const asAdmin = await request(app)
             .get(`/api/events/${event.id}/attendees`)
             .set("Authorization", `Bearer ${adminToken}`);
@@ -265,10 +264,36 @@ describe("admin event management", () => {
         const anonymous = await request(app).get(
             `/api/events/${event.id}/attendees`,
         );
-
+    
         expect(asAdmin.status).toBe(200);
         expect(asAdmin.body.attendees).toHaveLength(2);
         expect(asAdmin.body.attendees[0].user.email).toBeDefined();
         expect(asUser.status).toBe(403);
         expect(anonymous.status).toBe(401);
     });
+
+        it("returns admin stats and blocks everyone else", async () => {
+        const event = await createEvent({
+            title: `${prefix} stats`,
+            totalSeats: 4,
+        });
+
+        await addBookings(event.id, 2);
+
+        const asAdmin = await request(app)
+            .get("/api/events/stats")
+            .set("Authorization", `Bearer ${adminToken}`);
+        const asUser = await request(app)
+            .get("/api/events/stats")
+            .set("Authorization", `Bearer ${userToken}`);
+        const anonymous = await request(app).get("/api/events/stats");
+
+        expect(asAdmin.status).toBe(200);
+        expect(asAdmin.body.stats.totalBookings).toBeGreaterThanOrEqual(2);
+        expect(asAdmin.body.stats.upcomingEvents).toBeGreaterThanOrEqual(1);
+        expect(asAdmin.body.stats.seatFillRate).toBeGreaterThan(0);
+        expect(asAdmin.body.stats.seatFillRate).toBeLessThanOrEqual(100);
+        expect(asUser.status).toBe(403);
+        expect(anonymous.status).toBe(401);
+    });
+});
