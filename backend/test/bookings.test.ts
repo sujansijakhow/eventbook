@@ -166,6 +166,25 @@ describe("create booking", () => {
         expect(noBody.status).toBe(400);
         expect(unknown.status).toBe(404);
     });
+
+        it("rejects booking as an admin with 403", async () => {
+        const [admin] = await db
+            .insert(users)
+            .values({
+                name: "Test admin",
+                email: `${prefix}-admin@example.com`,
+                passwordHash: "not-a-real-hash",
+                role: "admin",
+            })
+            .returning({ id: users.id });
+
+        const token = jwt.sign({ role: "admin" }, env.JWT_SECRET, {
+            subject: admin.id,
+        });
+        const res = await book(token, openEventId);
+
+        expect(res.status).toBe(403);
+    });
 });
 
 describe("my bookings", () => {

@@ -1,3 +1,4 @@
+import { HttpError } from "../lib/httpError.js";
 import type { RequestHandler } from "express";
 
 import * as bookingsService from "../services/bookings.service.js";
@@ -7,6 +8,10 @@ import {
 } from "../schemas/booking.schema.js";
 
 export const createBooking: RequestHandler = async (req, res) => {
+    if (req.user!.role === "admin") {
+        throw new HttpError(403, "Admins cannot book seats");
+    }
+
     const { eventId } = req.body as CreateBookingInput;
     const booking = await bookingsService.createBooking(
         req.user!.id,
