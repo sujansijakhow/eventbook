@@ -6,7 +6,8 @@ import {
     getEvent,
     listEvents,
     updateEvent,
-    listAttendees
+    listAttendees,
+    getStats
 } from "../controllers/events.controller.js";
 import {
     authenticate,
@@ -21,6 +22,7 @@ import {
 const router = Router();
 
 router.get("/", listEvents);
+router.get("/stats", authenticate, requireAdmin, getStats);
 router.get("/:id", getEvent);
 
 router.post(

@@ -53,3 +53,9 @@ export const listAttendees: RequestHandler = async (req, res) => {
 
     res.status(200).json(result);
 };
+
+export const getStats: RequestHandler = async (_req, res) => {
+    const stats = await eventsService.getStats();
+
+    res.status(200).json({ stats });
+};

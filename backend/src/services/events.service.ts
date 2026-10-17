@@ -147,3 +147,34 @@ export async function listAttendees(eventId: string) {
 
     return { event, attendees };
 }
+
+export async function getStats() {
+    const now = new Date();
+
+    const [{ totalBookings }] = await db
+        .select({ totalBookings: count() })
+        .from(bookings);
+
+    const [upcoming] = await db
+        .select({
+            upcomingEvents: count(),
+            totalSeats: sql<number>`coalesce(sum(${events.totalSeats}), 0)::int`,
+        })
+        .from(events)
+        .where(gt(events.startsAt, now));
+
+    const [{ booked }] = await db
+        .select({ booked: count() })
+        .from(bookings)
+        .innerJoin(events, eq(events.id, bookings.eventId))
+        .where(gt(events.startsAt, now));
+
+    return {
+        totalBookings,
+        upcomingEvents: upcoming.upcomingEvents,
+        seatFillRate:
+            upcoming.totalSeats === 0
+                ? 0
+                : Math.round((booked / upcoming.totalSeats) * 100),
+    };
+}
