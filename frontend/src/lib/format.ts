@@ -1,20 +1,32 @@
 const TIME_ZONE = "Asia/Kathmandu";
 
+export function formatTime(iso: string) {
+    return new Date(iso).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        timeZone: TIME_ZONE,
+    });
+}
+
+export function formatLongDate(iso: string) {
+    return new Date(iso).toLocaleDateString("en-GB", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        timeZone: TIME_ZONE,
+    });
+}
+
 export function formatDateTime(iso: string) {
-    const date = new Date(iso);
-    const day = date.toLocaleDateString("en-GB", {
+    const day = new Date(iso).toLocaleDateString("en-GB", {
         weekday: "short",
         day: "numeric",
         month: "short",
         timeZone: TIME_ZONE,
     });
-    const time = date.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        timeZone: TIME_ZONE,
-    });
 
-    return `${day} · ${time}`;
+    return `${day} · ${formatTime(iso)}`;
 }
 
 export function dateChipParts(iso: string) {

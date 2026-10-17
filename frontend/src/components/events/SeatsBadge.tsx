@@ -1,4 +1,4 @@
-export type SeatTone = "ok" | "low" | "full";
+export type SeatTone = "ok" | "low" | "full" | "ended";
 
 export function getSeatState(seatsLeft: number, totalSeats: number) {
     if (seatsLeft <= 0) {
@@ -22,6 +22,14 @@ const styles: Record<SeatTone, string> = {
     ok: "bg-green-100 text-green-800",
     low: "bg-amber-100 text-amber-800",
     full: "bg-red-100 text-red-800",
+    ended: "bg-slate-100 text-slate-600",
+};
+
+export const seatBarColors: Record<SeatTone, string> = {
+    ok: "bg-brand-600",
+    low: "bg-amber-500",
+    full: "bg-red-600",
+    ended: "bg-slate-400",
 };
 
 type Props = { label: string; tone: SeatTone };

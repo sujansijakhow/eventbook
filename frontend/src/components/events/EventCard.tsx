@@ -1,21 +1,15 @@
 import { Clock, MapPin } from "lucide-react";
 import Link from "next/link";
 
-import { DateChip } from "@/components/ui/DateChip";
-import { ProgressBar } from "@/components/ui/ProgressBar";
 import {
     getSeatState,
+    seatBarColors,
     SeatsBadge,
-    type SeatTone,
 } from "@/components/events/SeatsBadge";
+import { DateChip } from "@/components/ui/DateChip";
+import { ProgressBar } from "@/components/ui/ProgressBar";
 import { dateChipParts, formatDateTime } from "@/lib/format";
 import type { EventItem } from "@/types";
-
-const barColors: Record<SeatTone, string> = {
-    ok: "bg-brand-600",
-    low: "bg-amber-500",
-    full: "bg-red-600",
-};
 
 export function EventCard({ event }: { event: EventItem }) {
     const { month, day } = dateChipParts(event.startsAt);
@@ -48,7 +42,7 @@ export function EventCard({ event }: { event: EventItem }) {
                 <ProgressBar
                     value={booked}
                     max={event.totalSeats}
-                    barClassName={barColors[state.tone]}
+                    barClassName={seatBarColors[state.tone]}
                 />
                 <div className="mt-2.5 flex justify-between text-[13px]">
                     <span className="text-slate-500">
