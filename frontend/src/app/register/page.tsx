@@ -8,16 +8,27 @@ import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/ui/FormField";
 import { useRegister } from "@/hooks/useAuthActions";
 import { fieldError } from "@/lib/api";
+import { validateRegister, type Errors } from "@/lib/validation";
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [errors, setErrors] = useState<Errors>({});
     const mutation = useRegister();
 
     function handleSubmit(event: FormEvent) {
         event.preventDefault();
-        mutation.mutate({ name, email, password });
+        mutation.reset();
+
+        const found = validateRegister({ name, email, password });
+        setErrors(found);
+
+        if (Object.keys(found).length > 0) {
+            return;
+        }
+
+        mutation.mutate({ name: name.trim(), email: email.trim(), password });
     }
 
     return (
@@ -27,38 +38,42 @@ export default function RegisterPage() {
                 Register to book seats at upcoming events.
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
                 {mutation.isError && <Alert>{mutation.error.message}</Alert>}
 
                 <FormField
                     id="name"
                     label="Name"
+                    placeholder="Your name"
                     autoComplete="name"
-                    required
                     value={name}
                     onChange={(event) => setName(event.target.value)}
-                    error={fieldError(mutation.error, "name")}
+                    error={errors.name ?? fieldError(mutation.error, "name")}
                 />
                 <FormField
                     id="email"
                     label="Email"
                     type="email"
+                    placeholder="you@example.com"
                     autoComplete="email"
-                    required
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    error={fieldError(mutation.error, "email")}
+                    error={errors.email ?? fieldError(mutation.error, "email")}
                 />
                 <FormField
                     id="password"
                     label="Password"
                     type="password"
+                    showPasswordToggle
+                    placeholder="Create a password"
                     autoComplete="new-password"
-                    required
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                     hint="At least 8 characters"
-                    error={fieldError(mutation.error, "password")}
+                    error={
+                        errors.password ??
+                        fieldError(mutation.error, "password")
+                    }
                 />
 
                 <Button
