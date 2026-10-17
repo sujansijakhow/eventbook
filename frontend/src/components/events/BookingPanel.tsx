@@ -61,7 +61,7 @@ export function BookingPanel({ eventId, seatsLeft, ended }: Props) {
                 </Link>
             ) : (
                 <Button
-                    className="w-full"
+                    className="w-full cursor-pointer"
                     disabled={checking || booking.isPending}
                     onClick={() => booking.mutate()}
                 >

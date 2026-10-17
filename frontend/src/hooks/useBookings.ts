@@ -32,3 +32,17 @@ export function useBookEvent(eventId: string) {
         },
     });
 }
+
+export function useCancelBooking() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (bookingId: string) =>
+            api.delete(`/api/bookings/${bookingId}`),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["bookings"] });
+            queryClient.invalidateQueries({ queryKey: ["event"] });
+            queryClient.invalidateQueries({ queryKey: ["events"] });
+        },
+    });
+}
