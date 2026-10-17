@@ -46,13 +46,30 @@ export type Attendee = {
     };
 };
 
+
+export type RecentBooking = {
+    id: string;
+    bookedAt: string;
+    user: { name: string; email: string };
+    event: { id: string; title: string };
+};
+
 export type Stats = {
     totalBookings: number;
     upcomingEvents: number;
     seatFillRate: number;
+    recentBookings: RecentBooking[];
 };
 
 export type FieldError = {
     field: string;
     message: string;
+};
+
+export type EventInput = {
+    title: string;
+    description: string;
+    venue: string;
+    startsAt: string;
+    totalSeats: number;
 };

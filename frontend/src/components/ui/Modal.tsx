@@ -37,7 +37,7 @@ export function Modal({ open, onClose, title, children }: Props) {
                     onClose();
                 }
             }}
-            className="m-auto max-h-[90vh] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-xl bg-white p-0 shadow-xl backdrop:bg-slate-900/60"
+            className="m-auto max-h-[90vh] w-[calc(100%-2rem)] max-w-lg  overflow-y-auto rounded-xl bg-white p-0 shadow-xl backdrop:bg-slate-900/60"
         >
             <div className="p-6">
                 <h2 id={titleId} className="text-xl font-bold">

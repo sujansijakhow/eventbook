@@ -15,7 +15,7 @@ const sizes: Record<Size, string> = {
 };
 
 export function buttonClass(variant: Variant = "primary", size: Size = "md") {
-    return `inline-flex items-center justify-center rounded-lg border font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]} ${sizes[size]}`;
+    return `cursor-pointer inline-flex items-center justify-center gap-2 rounded-lg border font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]} ${sizes[size]}`;
 }
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {

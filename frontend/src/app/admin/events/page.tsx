@@ -5,7 +5,7 @@ import { AdminEvents } from "@/components/admin/AdminEvents";
 import { RequireAuth } from "@/components/shared/RequireAuth";
 import { Spinner } from "@/components/ui/Spinner";
 
-export const metadata: Metadata = { title: "Admin · EventBook" };
+export const metadata: Metadata = { title: "Manage Events · EventBook" };
 
 export default function AdminEventsPage() {
     return (

@@ -1,4 +1,5 @@
 const TIME_ZONE = "Asia/Kathmandu";
+const NEPAL_OFFSET_MINUTES = 345;
 
 export function formatTime(iso: string) {
     return new Date(iso).toLocaleTimeString("en-US", {
@@ -44,4 +45,16 @@ export function dateChipParts(iso: string) {
             timeZone: TIME_ZONE,
         }),
     };
+}
+
+export function toInputValue(iso: string) {
+    const shifted = new Date(
+        new Date(iso).getTime() + NEPAL_OFFSET_MINUTES * 60_000,
+    );
+
+    return shifted.toISOString().slice(0, 16);
+}
+
+export function fromInputValue(value: string) {
+    return new Date(`${value}:00+05:45`).toISOString();
 }

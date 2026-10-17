@@ -10,7 +10,7 @@ export function useLogin() {
     return useMutation({
         mutationFn: (input: { email: string; password: string }) =>
             login(input.email, input.password),
-        onSuccess: () => router.push("/"),
+        onSuccess: (user) => router.push(user.role === "admin" ? "/admin" : "/"),
     });
 }
 

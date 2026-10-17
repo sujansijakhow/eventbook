@@ -55,3 +55,36 @@ export function validateRegister(values: {
 }) {
     return check(registerSchema, values);
 }
+
+const eventSchema = z.object({
+    title: z
+        .string()
+        .trim()
+        .min(2, "Title must be at least 2 characters")
+        .max(150, "Title must be at most 150 characters"),
+    description: z
+        .string()
+        .trim()
+        .max(2000, "Description must be at most 2000 characters"),
+    venue: z
+        .string()
+        .trim()
+        .min(2, "Venue must be at least 2 characters")
+        .max(150, "Venue must be at most 150 characters"),
+    startsAt: z.string().min(1, "Choose a date and time"),
+    totalSeats: z.coerce
+        .number("Enter the number of seats")
+        .int("Seats must be a whole number")
+        .min(1, "There must be at least 1 seat")
+        .max(10000, "At most 10000 seats"),
+});
+
+export function validateEvent(values: {
+    title: string;
+    description: string;
+    venue: string;
+    startsAt: string;
+    totalSeats: string;
+}) {
+    return check(eventSchema, values);
+}
