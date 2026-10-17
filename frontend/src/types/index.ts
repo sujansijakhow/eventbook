@@ -56,5 +56,3 @@ export type FieldError = {
     field: string;
     message: string;
 };
-
-export type EventsSearchParams = { search?: string; page?: string };

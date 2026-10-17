@@ -13,10 +13,14 @@ export function EventResults() {
     const searchParams = useSearchParams();
     const search = (searchParams.get("search") ?? "").trim();
     const page = Math.max(1, Number(searchParams.get("page")) || 1);
-    const { data, isPending, isError, error, refetch } = useEvents({
-        search,
-        page,
-    });
+        const {
+        data,
+        isPending,
+        isError,
+        error,
+        refetch,
+        isPlaceholderData,
+    } = useEvents({ search, page });
 
     if (isPending) {
         return <Spinner label="Loading events…" />;
@@ -33,9 +37,6 @@ export function EventResults() {
         );
     }
 
-    if (!data) {
-        return null;
-    }
 
     function hrefFor(target: number) {
         const query = new URLSearchParams();
@@ -70,7 +71,11 @@ export function EventResults() {
                         : "No upcoming events yet. Check back soon."}
                 </div>
             ) : (
-                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                <div
+                    className={`grid gap-5 sm:grid-cols-2 lg:grid-cols-3 ${
+                        isPlaceholderData ? "opacity-60" : ""
+                    }`}
+                >
                     {data.events.map((event) => (
                         <EventCard key={event.id} event={event} />
                     ))}
