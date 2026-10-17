@@ -98,3 +98,12 @@ export const api = {
         request<T>("PUT", path, { body }),
     delete: (path: string) => request<void>("DELETE", path),
 };
+
+export function fieldError(error: unknown, field: string) {
+    if (!(error instanceof ApiError)) {
+        return undefined;
+    }
+
+    return error.details.find((detail) => detail.field === field)
+        ?.message;
+}
