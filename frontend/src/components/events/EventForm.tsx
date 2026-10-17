@@ -29,9 +29,7 @@ export function EventForm({
     onCancel,
 }: Props) {
     const [title, setTitle] = useState(initial?.title ?? "");
-    const [description, setDescription] = useState(
-        initial?.description ?? "",
-    );
+    const [description, setDescription] = useState(initial?.description ?? "");
     const [venue, setVenue] = useState(initial?.venue ?? "");
     const [startsAt, setStartsAt] = useState(
         initial ? toInputValue(initial.startsAt) : "",
@@ -41,7 +39,10 @@ export function EventForm({
     );
     const [errors, setErrors] = useState<Errors>({});
 
-    const hasFieldErrors = error instanceof ApiError && error.details.length > 0;
+    const hasFieldErrors =
+        error instanceof ApiError && error.details.length > 0;
+
+    const nowValue = toInputValue(new Date().toISOString());
 
     function handleSubmit(event: FormEvent) {
         event.preventDefault();
@@ -103,6 +104,7 @@ export function EventForm({
                     label="Starts at"
                     type="datetime-local"
                     hint="Nepal time"
+                    min={nowValue}
                     value={startsAt}
                     onChange={(event) => setStartsAt(event.target.value)}
                     error={errors.startsAt ?? fieldError(error, "startsAt")}
@@ -115,9 +117,7 @@ export function EventForm({
                     placeholder="50"
                     value={totalSeats}
                     onChange={(event) => setTotalSeats(event.target.value)}
-                    error={
-                        errors.totalSeats ?? fieldError(error, "totalSeats")
-                    }
+                    error={errors.totalSeats ?? fieldError(error, "totalSeats")}
                 />
             </div>
 

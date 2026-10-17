@@ -15,8 +15,25 @@ type Props = {
 
 export function BookingPanel({ eventId, seatsLeft, ended }: Props) {
     const { user, loading } = useAuth();
-    const myBookings = useMyBookings(Boolean(user));
+    const isAdmin = user?.role === "admin";
+    const myBookings = useMyBookings(Boolean(user) && !isAdmin);
     const booking = useBookEvent(eventId);
+
+        if (isAdmin) {
+        return (
+            <div className="space-y-3">
+                <Link
+                    href="/admin/events"
+                    className={`${buttonClass("secondary")} w-full`}
+                >
+                    Open event management
+                </Link>
+                <p className="text-[13px] text-slate-500">
+                    Admins manage events and cannot book seats.
+                </p>
+            </div>
+        );
+    }
 
     const checking = loading || (Boolean(user) && myBookings.isPending);
     const alreadyBooked =
@@ -61,7 +78,7 @@ export function BookingPanel({ eventId, seatsLeft, ended }: Props) {
                 </Link>
             ) : (
                 <Button
-                    className="w-full cursor-pointer"
+                    className="w-full"
                     disabled={checking || booking.isPending}
                     onClick={() => booking.mutate()}
                 >

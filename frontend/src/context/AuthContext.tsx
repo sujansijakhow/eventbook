@@ -15,7 +15,7 @@ import type { User } from "@/types";
 type AuthContextValue = {
     user: User | null;
     loading: boolean;
-    login: (email: string, password: string) => Promise<void>;
+    login: (email: string, password: string) => Promise<User>;
     register: (
         name: string,
         email: string,
@@ -50,6 +50,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         tokenStore.set(data.token);
         setUser(data.user);
+
+        return data.user;
     }
 
     async function register(

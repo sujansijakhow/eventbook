@@ -6,7 +6,11 @@ import { useEffect, useState } from "react";
 
 import { useDebounce } from "@/hooks/useDebounce";
 
-export function EventSearch() {
+type Props = {
+    basePath?: string;
+};
+
+export function EventSearch({ basePath = "/" }: Props) {
     const router = useRouter();
     const current = useSearchParams().get("search") ?? "";
     const [value, setValue] = useState(current);
@@ -18,9 +22,11 @@ export function EventSearch() {
         }
 
         router.replace(
-            debounced ? `/?search=${encodeURIComponent(debounced)}` : "/",
+            debounced
+                ? `${basePath}?search=${encodeURIComponent(debounced)}`
+                : basePath,
         );
-    }, [debounced, current, router]);
+    }, [debounced, current, router, basePath]);
 
     return (
         <div className="w-full max-w-sm min-w-64 flex-1">

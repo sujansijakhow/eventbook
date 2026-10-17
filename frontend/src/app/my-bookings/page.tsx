@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "My bookings · EventBook" };
 
 export default function MyBookingsPage() {
     return (
-        <RequireAuth>
+        <RequireAuth role="user">
             <MyBookings />
         </RequireAuth>
     );
