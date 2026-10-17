@@ -19,17 +19,23 @@ export function BookingPanel({ eventId, seatsLeft, ended }: Props) {
     const myBookings = useMyBookings(Boolean(user) && !isAdmin);
     const booking = useBookEvent(eventId);
 
-        if (isAdmin) {
+    if (isAdmin) {
         return (
             <div className="space-y-3">
                 <Link
-                    href="/admin/events"
-                    className={`${buttonClass("secondary")} w-full`}
+                    href={`/admin/events/${eventId}/attendees`}
+                    className={`${buttonClass("primary")} w-full`}
                 >
-                    Open event management
+                    View attendees
                 </Link>
                 <p className="text-[13px] text-slate-500">
-                    Admins manage events and cannot book seats.
+                    Admins manage events and cannot book seats.{" "}
+                    <Link
+                        href="/admin/events"
+                        className="font-medium text-brand-700 hover:underline"
+                    >
+                        Manage events
+                    </Link>
                 </p>
             </div>
         );

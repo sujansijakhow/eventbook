@@ -73,3 +73,9 @@ export type EventInput = {
     startsAt: string;
     totalSeats: number;
 };
+
+
+export type EventAttendees = {
+    event: EventItem;
+    attendees: Attendee[];
+};

@@ -5,7 +5,7 @@ import {
 } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import type { EventInput, EventItem, Stats } from "@/types";
+import type { EventAttendees, EventInput, EventItem, Stats } from "@/types";
 
 function useRefreshEvents() {
     const queryClient = useQueryClient();
@@ -59,5 +59,13 @@ export function useDeleteEvent() {
     return useMutation({
         mutationFn: (id: string) => api.delete(`/api/events/${id}`),
         onSuccess: refresh,
+    });
+}
+
+export function useAttendees(eventId: string) {
+    return useQuery({
+        queryKey: ["attendees", eventId],
+        queryFn: () =>
+            api.get<EventAttendees>(`/api/events/${eventId}/attendees`),
     });
 }
