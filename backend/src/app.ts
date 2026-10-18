@@ -8,6 +8,7 @@ import eventsRouter from "./routes/events.routes.js";
 import bookingsRouter from "./routes/bookings.routes.js";
 
 export const app = express();
+app.set("trust proxy", 1);
 
 app.use(
     cors({
