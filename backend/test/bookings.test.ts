@@ -50,6 +50,20 @@ async function seatsLeft(eventId: string) {
 
     return res.body.event.seatsLeft as number;
 }
+async function createToken(name: string) {
+    const [user] = await db
+        .insert(users)
+        .values({
+            name: `Test ${name}`,
+            email: `${prefix}-${name}@example.com`,
+            passwordHash: "not-a-real-hash",
+        })
+        .returning({ id: users.id });
+
+    return jwt.sign({ role: "user" }, env.JWT_SECRET, {
+        subject: user.id,
+    });
+}
 
 beforeAll(async () => {
     const createdUsers = await db
@@ -184,6 +198,32 @@ describe("create booking", () => {
         const res = await book(token, openEventId);
 
         expect(res.status).toBe(403);
+    });
+
+        it("never oversells the last seat when two users book at once", async () => {
+        const [lastSeat] = await db
+            .insert(events)
+            .values({
+                title: `${prefix} last seat`,
+                description: "",
+                venue: "Test venue",
+                startsAt: new Date(Date.now() + 7 * DAY),
+                totalSeats: 1,
+            })
+            .returning({ id: events.id });
+
+        const [tokenA, tokenB] = await Promise.all([
+            createToken("race-a"),
+            createToken("race-b"),
+        ]);
+
+        const [first, second] = await Promise.all([
+            book(tokenA, lastSeat.id),
+            book(tokenB, lastSeat.id),
+        ]);
+
+        expect([first.status, second.status].sort()).toEqual([201, 409]);
+        expect(await seatsLeft(lastSeat.id)).toBe(0);
     });
 });
 
