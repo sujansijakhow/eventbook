@@ -25,6 +25,15 @@ const topics = [
 const kinds = ["Workshop", "Meetup"];
 const venues = ["Kathmandu", "Lalitpur", "Bhaktapur", "Pokhara"];
 const seatOptions = [20, 30, 50, 100];
+const hours = [9, 10, 11, 14, 16, 18];
+
+function startsIn(days: number, hour: number) {
+    const date = new Date(Date.now() + days * DAY);
+
+    date.setUTCHours(hour - 6, 15, 0, 0);
+
+    return date;
+}
 
 async function seed() {
     const adminHash = await bcrypt.hash(ADMIN_PASSWORD, 12);
@@ -81,7 +90,7 @@ async function seed() {
                 title: `${topic} ${kind}`,
                 description: `${kind} on ${topic} for developers and students.`,
                 venue: venues[i % venues.length],
-                startsAt: new Date(Date.now() + (i + 2) * DAY),
+                startsAt: startsIn(i * 3 + 15, hours[i % hours.length]),
                 totalSeats: seatOptions[i % seatOptions.length],
             };
         }),
@@ -92,21 +101,21 @@ async function seed() {
             title: "Photography Walk",
             description: "Nearly full: only one seat left.",
             venue: "Patan",
-            startsAt: new Date(Date.now() + 5 * DAY),
+            startsAt: startsIn(20, 6),
             totalSeats: 5,
         },
         {
             title: "Sold Out Hackathon",
             description: "Fully booked.",
             venue: "Kathmandu",
-            startsAt: new Date(Date.now() + 6 * DAY),
+            startsAt: startsIn(23, 9),
             totalSeats: 2,
         },
         {
             title: "Old Concert",
             description: "This event already happened.",
             venue: "Bhaktapur",
-            startsAt: new Date(Date.now() - 3 * DAY),
+            startsAt: startsIn(-3, 18),
             totalSeats: 100,
         },
     ];
