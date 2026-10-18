@@ -11,12 +11,12 @@ const USER_PASSWORD = "User123";
 
 const topics = [
     "React",
-    "Node.js",
+    "NodeJS",
     "TypeScript",
     "PostgreSQL",
     "Docker",
     "UI Design",
-    "Next.js",
+    "Next JS",
     "Python",
     "Git",
     "Testing",
