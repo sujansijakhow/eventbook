@@ -17,7 +17,6 @@ const router = Router();
 
 router.post("/register", validateBody(registerSchema), register);
 router.post("/login", loginLimiter, validateBody(loginSchema), login);
-router.post("/login", validateBody(loginSchema), login);
 router.get("/me", authenticate, me);
 
 export default router;

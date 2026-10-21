@@ -5,7 +5,7 @@ import request from "supertest";
 import { app } from "../src/app.js";
 
 describe("login rate limit", () => {
-    it("blocks an IP after 10 failed attempts with 429", async () => {
+    it("blocks an IP after 5 failed attempts with 429", async () => {
         const email = `nobody-${randomUUID().slice(0, 8)}@example.com`;
         const attempt = () =>
             request(app)
